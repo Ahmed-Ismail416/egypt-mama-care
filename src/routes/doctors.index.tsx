@@ -45,7 +45,7 @@ function DoctorsPage() {
   );
 
   const update = (patch: Partial<DoctorsSearch>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: DoctorsSearch) => ({ ...prev, ...patch }), replace: true });
 
   return (
     <div className="container mx-auto px-4 py-10">
