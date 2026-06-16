@@ -127,7 +127,7 @@ function Stats() {
     { icon: Heart, label: "خدمة مجانية", value: "100%" },
   ];
   return (
-    <section className="container mx-auto px-4 -mt-10">
+    <section className="container mx-auto px-4 mt-10 md:-mt-10">
       <div className="grid gap-4 sm:grid-cols-3 max-w-4xl mx-auto">
         {items.map(({ icon: Icon, label, value }) => (
           <div key={label} className="card-surface rounded-2xl border border-border/60 p-5 flex items-center gap-4">
