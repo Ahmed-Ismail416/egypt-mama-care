@@ -14,16 +14,274 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          address: string | null
+          admin_note: string | null
+          bio: string | null
+          city_id: string | null
+          confirmed_female: boolean
+          created_at: string
+          doctor_name: string
+          email: string
+          governorate_id: string | null
+          id: string
+          image_url: string | null
+          license_url: string | null
+          map_url: string | null
+          phone: string
+          specialty: string
+          status: Database["public"]["Enums"]["application_status"]
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          admin_note?: string | null
+          bio?: string | null
+          city_id?: string | null
+          confirmed_female?: boolean
+          created_at?: string
+          doctor_name: string
+          email: string
+          governorate_id?: string | null
+          id?: string
+          image_url?: string | null
+          license_url?: string | null
+          map_url?: string | null
+          phone: string
+          specialty?: string
+          status?: Database["public"]["Enums"]["application_status"]
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          admin_note?: string | null
+          bio?: string | null
+          city_id?: string | null
+          confirmed_female?: boolean
+          created_at?: string
+          doctor_name?: string
+          email?: string
+          governorate_id?: string | null
+          id?: string
+          image_url?: string | null
+          license_url?: string | null
+          map_url?: string | null
+          phone?: string
+          specialty?: string
+          status?: Database["public"]["Enums"]["application_status"]
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_governorate_id_fkey"
+            columns: ["governorate_id"]
+            isOneToOne: false
+            referencedRelation: "governorates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cities: {
+        Row: {
+          created_at: string
+          governorate_id: string
+          id: string
+          name_ar: string
+        }
+        Insert: {
+          created_at?: string
+          governorate_id: string
+          id?: string
+          name_ar: string
+        }
+        Update: {
+          created_at?: string
+          governorate_id?: string
+          id?: string
+          name_ar?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_governorate_id_fkey"
+            columns: ["governorate_id"]
+            isOneToOne: false
+            referencedRelation: "governorates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      doctors: {
+        Row: {
+          address: string | null
+          bio: string | null
+          city: string | null
+          city_id: string | null
+          created_at: string
+          email: string | null
+          featured: boolean
+          governorate: string | null
+          governorate_id: string | null
+          id: string
+          image_url: string | null
+          map_url: string | null
+          name: string
+          phone: string | null
+          specialty: string
+          updated_at: string
+          verified: boolean
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          city_id?: string | null
+          created_at?: string
+          email?: string | null
+          featured?: boolean
+          governorate?: string | null
+          governorate_id?: string | null
+          id?: string
+          image_url?: string | null
+          map_url?: string | null
+          name: string
+          phone?: string | null
+          specialty?: string
+          updated_at?: string
+          verified?: boolean
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          city_id?: string | null
+          created_at?: string
+          email?: string | null
+          featured?: boolean
+          governorate?: string | null
+          governorate_id?: string | null
+          id?: string
+          image_url?: string | null
+          map_url?: string | null
+          name?: string
+          phone?: string | null
+          specialty?: string
+          updated_at?: string
+          verified?: boolean
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctors_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctors_governorate_id_fkey"
+            columns: ["governorate_id"]
+            isOneToOne: false
+            referencedRelation: "governorates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      governorates: {
+        Row: {
+          created_at: string
+          id: string
+          name_ar: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name_ar: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name_ar?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_admin_if_first: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      application_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +408,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      application_status: ["pending", "approved", "rejected"],
+    },
   },
 } as const
