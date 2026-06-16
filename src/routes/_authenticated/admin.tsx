@@ -115,7 +115,8 @@ function DoctorsAdmin() {
   }
 
   async function toggle(id: string, field: "verified" | "featured", value: boolean) {
-    const { error } = await supabase.from("doctors").update({ [field]: value }).eq("id", id);
+    const patch = field === "verified" ? { verified: value } : { featured: value };
+    const { error } = await supabase.from("doctors").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["doctors"] });
     qc.invalidateQueries({ queryKey: ["admin", "doctors"] });
