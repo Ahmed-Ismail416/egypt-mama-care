@@ -12,7 +12,7 @@ export async function getSignedImage(path: string | null | undefined, bucket = "
 
 export async function uploadPublicDoctorImage(file: File): Promise<string> {
   const ext = file.name.split(".").pop() ?? "jpg";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `applications/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("doctor-images").upload(path, file, { upsert: false, contentType: file.type });
   if (error) throw error;
   return path;
@@ -20,7 +20,7 @@ export async function uploadPublicDoctorImage(file: File): Promise<string> {
 
 export async function uploadLicense(file: File): Promise<string> {
   const ext = file.name.split(".").pop() ?? "pdf";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `applications/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("doctor-licenses").upload(path, file, { upsert: false, contentType: file.type });
   if (error) throw error;
   return path;
