@@ -51,6 +51,7 @@ export type DoctorFilters = {
   q?: string;
   governorateId?: string | null;
   cityId?: string | null;
+  specialty?: string | null;
 };
 
 export const doctorsQuery = (filters: DoctorFilters = {}) =>
@@ -65,12 +66,27 @@ export const doctorsQuery = (filters: DoctorFilters = {}) =>
         .order("created_at", { ascending: false });
       if (filters.governorateId) q = q.eq("governorate_id", filters.governorateId);
       if (filters.cityId) q = q.eq("city_id", filters.cityId);
+      if (filters.specialty) q = q.eq("specialty", filters.specialty);
       if (filters.q && filters.q.trim()) q = q.ilike("name", `%${filters.q.trim()}%`);
       const { data, error } = await q;
       if (error) throw error;
       return data ?? [];
     },
   });
+
+export const specialtiesQuery = queryOptions({
+  queryKey: ["specialties"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("doctors")
+      .select("specialty")
+      .eq("verified", true);
+    if (error) throw error;
+    const set = new Set<string>();
+    for (const row of data ?? []) if (row.specialty) set.add(row.specialty);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "ar"));
+  },
+});
 
 export const doctorQuery = (id: string) =>
   queryOptions({
