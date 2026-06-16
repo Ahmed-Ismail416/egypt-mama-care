@@ -87,6 +87,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "دليل دكتورات النساء" },
       { property: "og:locale", content: "ar_EG" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:title", content: "دليل دكتورات النساء والتوليد في مصر" },
+      { name: "twitter:title", content: "دليل دكتورات النساء والتوليد في مصر" },
+      { property: "og:description", content: "أكبر دليل عربي للطبيبات المتخصصات في النساء والتوليد في جميع محافظات مصر — ابحثي بالاسم، المحافظة، أو المنطقة." },
+      { name: "twitter:description", content: "أكبر دليل عربي للطبيبات المتخصصات في النساء والتوليد في جميع محافظات مصر — ابحثي بالاسم، المحافظة، أو المنطقة." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77b2a741-2a20-4003-9a3d-6515b801de36/id-preview-45144e62--8e07229b-018b-4972-9441-63223436b461.lovable.app-1781619314727.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77b2a741-2a20-4003-9a3d-6515b801de36/id-preview-45144e62--8e07229b-018b-4972-9441-63223436b461.lovable.app-1781619314727.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
