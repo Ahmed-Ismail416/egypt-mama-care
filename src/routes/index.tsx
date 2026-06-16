@@ -1,27 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Search, MapPin, Stethoscope, ShieldCheck, Heart, Sparkles } from "lucide-react";
-import { featuredDoctorsQuery, governoratesQuery, statsQuery, citiesQuery } from "@/lib/queries";
-import { DoctorCard } from "@/components/site/doctor-card";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "دليل دكتورات النساء والتوليد في مصر" },
-      { name: "description", content: "ابحثي بسهولة عن أفضل الطبيبات المتخصصات في النساء والتوليد بجميع محافظات مصر، مع أرقام التواصل، العناوين، وروابط الخرائط." },
-      { property: "og:title", content: "دليل دكتورات النساء والتوليد في مصر" },
-      { property: "og:description", content: "أكبر دليل عربي للطبيبات في جميع محافظات مصر." },
-      { property: "og:url", content: "/" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
-  loader: ({ context }) => {
-    context.queryClient.prefetchQuery(featuredDoctorsQuery);
-    context.queryClient.prefetchQuery(governoratesQuery);
-    context.queryClient.prefetchQuery(statsQuery);
+  beforeLoad: () => {
+    throw redirect({ to: "/doctors" });
   },
-  component: HomePage,
+  component: () => null,
 });
 
 function HomePage() {
