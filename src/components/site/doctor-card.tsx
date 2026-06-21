@@ -8,10 +8,12 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
   return (
     <article className="card-surface rounded-2xl border border-border/60 p-5 transition hover:shadow-glow">
       <div className="flex items-start gap-4">
-        <DoctorImage path={doctor.image_url} alt={doctor.name} size={72} />
+        <DoctorImage path={doctor.image_url} alt={doctor.name} size={72} className="shrink-0" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-bold text-lg leading-tight truncate">د. {doctor.name}</h3>
+            <h3 className="font-bold text-lg leading-tight truncate max-w-full">
+              د. {doctor.name}
+            </h3>
             {doctor.featured && (
               <span className="inline-flex items-center gap-1 text-xs bg-secondary text-secondary-foreground rounded-full px-2 py-0.5">
                 <Sparkles className="h-3 w-3" /> مميزة
@@ -30,7 +32,7 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         {doctor.phone && (
           <a
             href={`tel:${doctor.phone}`}

@@ -14,32 +14,42 @@ export function DoctorImage({
   size?: number;
 }) {
   const [src, setSrc] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     let cancelled = false;
-    getSignedImage(path).then((u) => !cancelled && setSrc(u));
+    setLoaded(false);
+    setSrc(null);
+    getSignedImage(path).then((u) => {
+      if (!cancelled) {
+        setSrc(u);
+      }
+    });
     return () => {
       cancelled = true;
     };
   }, [path]);
 
-  if (!src) {
-    return (
-      <div
-        className={`grid place-items-center rounded-full bg-gradient-to-br from-brand-pink to-brand-purple/30 text-primary ${className}`}
-        style={{ width: size, height: size }}
-        aria-label={alt}
-      >
-        <UserRound className="h-1/2 w-1/2" />
-      </div>
-    );
-  }
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className={`rounded-full object-cover ${className}`}
+    <div
+      className={`shrink-0 rounded-full overflow-hidden ${className}`}
       style={{ width: size, height: size }}
-    />
+      aria-label={alt}
+    >
+      {!src || !loaded ? (
+        <div className="grid place-items-center w-full h-full bg-gradient-to-br from-brand-pink to-brand-purple/30 text-primary">
+          <UserRound className="h-1/2 w-1/2" />
+        </div>
+      ) : null}
+      {src && (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          className={`w-full h-full rounded-full object-cover ${loaded ? "block" : "hidden"}`}
+          style={{ width: size, height: size }}
+        />
+      )}
+    </div>
   );
 }

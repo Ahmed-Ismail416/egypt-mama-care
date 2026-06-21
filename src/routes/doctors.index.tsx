@@ -1,14 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import * as React from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { citiesQuery, doctorsQuery, governoratesQuery, specialtiesQuery } from "@/lib/queries";
 import { DoctorCard } from "@/components/site/doctor-card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type DoctorsSearch = {
   q?: string;
   gov?: string;
   city?: string;
   specialty?: string;
+  page?: number;
 };
 
 export const Route = createFileRoute("/doctors/")({
@@ -17,11 +28,15 @@ export const Route = createFileRoute("/doctors/")({
     gov: typeof s.gov === "string" ? s.gov : undefined,
     city: typeof s.city === "string" ? s.city : undefined,
     specialty: typeof s.specialty === "string" ? s.specialty : undefined,
+    page: typeof s.page === "number" ? s.page : 1,
   }),
   head: () => ({
     meta: [
       { title: "دليل الطبيبات في مصر" },
-      { name: "description", content: "تصفّحي القائمة الكاملة للطبيبات بمختلف التخصصات في جميع محافظات مصر." },
+      {
+        name: "description",
+        content: "تصفّحي القائمة الكاملة للطبيبات بمختلف التخصصات في جميع محافظات مصر.",
+      },
       { property: "og:title", content: "دليل الطبيبات في مصر" },
       { property: "og:url", content: "/doctors" },
     ],
@@ -32,7 +47,14 @@ export const Route = createFileRoute("/doctors/")({
     context.queryClient.prefetchQuery(governoratesQuery);
     context.queryClient.prefetchQuery(specialtiesQuery);
     context.queryClient.prefetchQuery(
-      doctorsQuery({ q: deps.q, governorateId: deps.gov ?? null, cityId: deps.city ?? null, specialty: deps.specialty ?? null }),
+      doctorsQuery({
+        q: deps.q,
+        governorateId: deps.gov ?? null,
+        cityId: deps.city ?? null,
+        specialty: deps.specialty ?? null,
+        page: deps.page ?? 1,
+        limit: 12,
+      }),
     );
   },
   component: DoctorsPage,
@@ -47,26 +69,44 @@ function DoctorsPage() {
   const fayoumId = govs.find((g) => g.slug === "fayoum")?.id ?? null;
   const effectiveGov = search.gov ?? fayoumId ?? null;
   const { data: cities } = useSuspenseQuery(citiesQuery(effectiveGov));
-  const { data: doctors } = useSuspenseQuery(
+  const {
+    data: { data: doctors, total },
+  } = useSuspenseQuery(
     doctorsQuery({
       q: search.q,
       governorateId: effectiveGov,
       cityId: search.city ?? null,
       specialty: search.specialty ?? null,
+      page: search.page ?? 1,
+      limit: 12,
     }),
   );
 
-  const update = (patch: Partial<DoctorsSearch>) =>
-    navigate({ search: (prev: DoctorsSearch) => ({ ...prev, ...patch }), replace: true });
+  const totalPages = Math.ceil(total / 12);
+  const currentPage = search.page ?? 1;
+
+  const update = (patch: Partial<DoctorsSearch>) => {
+    // If the patch doesn't explicitly contain a page, we generally want to reset it to 1
+    // (e.g. when changing gov, city, specialty, or search phrase).
+    // Unless we are explicitly only changing the page.
+    const newPage = patch.page !== undefined ? patch.page : 1;
+    navigate({
+      search: (prev: DoctorsSearch) => ({ ...prev, ...patch, page: newPage }),
+      replace: true,
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-10">
       <header className="mb-6">
         <p className="text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">الرئيسية</Link> / دليل الطبيبات
+          <Link to="/" className="hover:text-foreground">
+            الرئيسية
+          </Link>{" "}
+          / دليل الطبيبات
         </p>
         <h1 className="mt-1 text-3xl md:text-4xl font-extrabold">دليل الطبيبات</h1>
-        <p className="text-muted-foreground mt-1">{doctors.length} طبيبة مطابقة لبحثك</p>
+        <p className="text-muted-foreground mt-1">{total} طبيبة مطابقة لبحثك</p>
       </header>
 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-[1fr_180px_180px_200px] mb-6 rounded-2xl border border-border bg-card p-3 shadow-soft">
@@ -85,7 +125,11 @@ function DoctorsPage() {
           className="rounded-xl bg-background px-3 py-2.5 text-sm border border-input focus:border-primary"
         >
           <option value="">كل المحافظات</option>
-          {govs.map((g) => <option key={g.id} value={g.id}>{g.name_ar}</option>)}
+          {govs.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.name_ar}
+            </option>
+          ))}
         </select>
         <select
           value={search.city ?? ""}
@@ -94,7 +138,11 @@ function DoctorsPage() {
           className="rounded-xl bg-background px-3 py-2.5 text-sm border border-input focus:border-primary disabled:opacity-60"
         >
           <option value="">كل المناطق</option>
-          {cities.map((c) => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
+          {cities.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name_ar}
+            </option>
+          ))}
         </select>
         <select
           value={search.specialty ?? ""}
@@ -102,7 +150,11 @@ function DoctorsPage() {
           className="rounded-xl bg-background px-3 py-2.5 text-sm border border-input focus:border-primary"
         >
           <option value="">كل التخصصات</option>
-          {specialties.map((s) => <option key={s} value={s}>{s}</option>)}
+          {specialties.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -111,9 +163,60 @@ function DoctorsPage() {
           لا توجد طبيبات مطابقة. جرّبي تغيير عوامل التصفية.
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {doctors.map((d) => <DoctorCard key={d.id} doctor={d} />)}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {doctors.map((d) => (
+              <DoctorCard key={d.id} doctor={d} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <Pagination dir="ltr">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => update({ page: Math.max(1, currentPage - 1) })}
+                    className={
+                      currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, i, arr) => (
+                    <React.Fragment key={p}>
+                      {i > 0 && arr[i - 1] !== p - 1 && (
+                        <PaginationItem>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      )}
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => update({ page: p })}
+                          isActive={currentPage === p}
+                          className="cursor-pointer"
+                        >
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </React.Fragment>
+                  ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => update({ page: Math.min(totalPages, currentPage + 1) })}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+        </>
       )}
     </div>
   );

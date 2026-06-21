@@ -52,6 +52,8 @@ export type DoctorFilters = {
   governorateId?: string | null;
   cityId?: string | null;
   specialty?: string | null;
+  page?: number;
+  limit?: number;
 };
 
 export const doctorsQuery = (filters: DoctorFilters = {}) =>
@@ -60,17 +62,25 @@ export const doctorsQuery = (filters: DoctorFilters = {}) =>
     queryFn: async () => {
       let q = supabase
         .from("doctors")
-        .select("*")
+        .select("*", { count: "exact" })
         .eq("verified", true)
         .order("featured", { ascending: false })
         .order("created_at", { ascending: false });
+      
       if (filters.governorateId) q = q.eq("governorate_id", filters.governorateId);
       if (filters.cityId) q = q.eq("city_id", filters.cityId);
       if (filters.specialty) q = q.eq("specialty", filters.specialty);
       if (filters.q && filters.q.trim()) q = q.ilike("name", `%${filters.q.trim()}%`);
-      const { data, error } = await q;
+
+      if (filters.page && filters.limit) {
+        const from = (filters.page - 1) * filters.limit;
+        const to = from + filters.limit - 1;
+        q = q.range(from, to);
+      }
+
+      const { data, count, error } = await q;
       if (error) throw error;
-      return data ?? [];
+      return { data: data ?? [], total: count ?? 0 };
     },
   });
 
