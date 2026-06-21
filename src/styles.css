@@ -167,3 +167,9 @@
   background-image: var(--gradient-card);
   box-shadow: var(--shadow-soft);
 }
+
+@layer base {
+  html, body {
+    overflow-x: hidden;
+  }
+}
