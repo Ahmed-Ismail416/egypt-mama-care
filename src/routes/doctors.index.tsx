@@ -172,7 +172,7 @@ function DoctorsPage() {
 
           {totalPages > 1 && (
             <Pagination dir="ltr">
-              <PaginationContent>
+              <PaginationContent className="flex-wrap justify-center">
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() => update({ page: Math.max(1, currentPage - 1) })}
