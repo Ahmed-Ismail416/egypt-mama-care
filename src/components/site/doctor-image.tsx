@@ -37,7 +37,7 @@ export function DoctorImage({
     >
       {!src || !loaded ? (
         <div className="grid place-items-center w-full h-full bg-gradient-to-br from-brand-pink to-brand-purple/30 text-primary">
-          <UserRound className="h-1/2 w-1/2" />
+          <span>👩‍⚕️</span>
         </div>
       ) : null}
       {src && (
@@ -53,3 +53,4 @@ export function DoctorImage({
     </div>
   );
 }
+

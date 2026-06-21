@@ -38,7 +38,7 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
             href={`tel:${doctor.phone}`}
             className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
           >
-            <Phone className="h-3.5 w-3.5" /> اتصال
+            <Phone className="w-5 h-5 flex-shrink-0" />
           </a>
         )}
         {whatsapp && (
